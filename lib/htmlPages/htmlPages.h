@@ -1,3 +1,6 @@
+#ifndef HTMLPAGES_H
+#define HTMLPAGES_H
+
 #include <Arduino.h>
 #include <string.h>
 
@@ -8,3 +11,5 @@ class htmlPages{
         static String login(bool);
         static String config();
 };
+
+#endif

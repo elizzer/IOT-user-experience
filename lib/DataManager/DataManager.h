@@ -1,3 +1,7 @@
+#ifndef DATAMANAGER_H
+#define DATAMANAGER_H
+
+
 #include<Arduino.h>
 #include<EEPROM.h>
 
@@ -18,6 +22,10 @@ class DataManager{
         DataManager();
         void store();
         void read();
+        void printData(){
+            Data.prtinData();
+        }
+        bool loginDataCheck(String username,String password);
 
         // Getters
         String getUsername();
@@ -35,3 +43,5 @@ class DataManager{
         String setDevicePassword(String value);
 
 };
+
+#endif

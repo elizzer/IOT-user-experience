@@ -1,30 +1,15 @@
+#ifndef DEVICECONFIGSERVER_H
+#define DEVICECONFIGSERVER_H
+
 #include <ESP8266WebServer.h>
 #include <string.h>
-
-
-struct configStruct{
-    String username;
-    String userpassword;
-    String wifiname;
-    String wifipassword;
-    String devicename;
-    String devicepassword;
-    configStruct(){
-        String username="";
-        String userpassword="";
-        String wifiname="";
-        String wifipassword="";
-        String devicename="admin";
-        String devicepassword="admin";
-        Serial.println("[+]Struct constructor");
-    }
-
-};
+#include <DataManager.h>
 
 class DeviceConfigServer:public ESP8266WebServer{
     static ESP8266WebServer server;
     static bool loggedin;
-    static configStruct configData;
+    static DataManager configdata;
+    // static configStruct configData;
     public:
         // DeviceConfigServer():ESP8266WebServer(80){
         //     Serial.println("[+]DeviceCondifServer init...");
@@ -37,6 +22,6 @@ class DeviceConfigServer:public ESP8266WebServer{
         static void loginGet();
         static void config();
         static void configPost();
-        static void setConfigData(String username="",String userpassword="",String wifiname="",String wifipassword="",String devicename="",String devicepassword="");
-        static void getConfigData();
 };
+
+#endif

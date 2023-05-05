@@ -1,3 +1,6 @@
+#ifndef AP_H
+#define AP_H
+
 #include <ESP8266WiFi.h>
 #include <string.h>
 
@@ -9,3 +12,5 @@ class AP{
         void onConnect();
         String getMessage();
 };
+
+#endif

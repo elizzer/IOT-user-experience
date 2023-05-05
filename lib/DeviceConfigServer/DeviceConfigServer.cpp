@@ -10,11 +10,14 @@ DeviceConfigServer::DeviceConfigServer():ESP8266WebServer(80){
 }
 
 bool DeviceConfigServer::loggedin=false;
-configStruct DeviceConfigServer::configData;
 
-// Static member function to start the server
+DataManager DeviceConfigServer::configdata;
+
 void DeviceConfigServer::begin() {
-    setConfigData("","","","","admin","admin");
+    
+    Serial.println("[+]DeviceConfigServer begin...");
+    configdata.read();
+    configdata.printData();
     server.on("/",home);
     server.on("/login",HTTP_GET,loginGet);
     server.on("/login",HTTP_POST,login);
@@ -24,21 +27,10 @@ void DeviceConfigServer::begin() {
     Serial.println("[+]DeviceConfigServer started...");
 }
 
-// Static member function to handle client requests
 void DeviceConfigServer::handleClient() {
     server.handleClient();
 }
 
-void DeviceConfigServer::setConfigData(String username,String userpassword,String wifiname,String wifipassword,String devicename,String devicepassword){
-            configData.username=username;
-            configData.userpassword=userpassword;
-            configData.wifiname=wifiname;
-            configData.wifipassword=wifipassword;
-            configData.devicename=devicename;
-            configData.devicepassword=devicepassword;
-}
-
-// Static member function to serve the home page
 void DeviceConfigServer::home() {
     server.send(200, "text/html", htmlPages::home().c_str());
 }
@@ -50,14 +42,11 @@ void DeviceConfigServer::login(){
     String password= server.arg(1);
     Serial.println(password.c_str());
 
-    Serial.println(DeviceConfigServer::configData.devicename.c_str());
-
-    if(!strcmp(username.c_str(),DeviceConfigServer::configData.devicename.c_str())&&!strcmp(password.c_str(),DeviceConfigServer::configData.devicepassword.c_str())){
-        Serial.println("[+]Good credentials...");
+    if(configdata.loginDataCheck(username,password)){
         DeviceConfigServer::loggedin=true;
         server.send(200,"text/html",htmlPages::config().c_str());
-    }else{
-        Serial.println("[+]bad credentials...");
+    }
+    else{
         DeviceConfigServer::loggedin=false;
         server.send(200,"text/html",htmlPages::login(true).c_str());
     }
@@ -87,12 +76,27 @@ void DeviceConfigServer::configPost(){
 
     DataManager configData;
 
-    Serial.println(username.c_str());
-    Serial.println(userpassword.c_str());
-    Serial.println(wifipassword.c_str());
-    Serial.println(wifiname.c_str());
-    Serial.println(devicename.c_str());
-    Serial.println(devicepassword.c_str());
+    configData.setUsername(username);
+    configData.setPassword(userpassword);
+    configData.setWifiName(wifiname);
+    configData.setWifiPassword(wifipassword);
+    configData.setDeviceName(devicename);
+    configData.setDevicePassword(devicepassword);
+
+    Serial.println("[+]Storing...");
+    configData.store();
+    // Serial.println("[+]Reading...");
+    // configData.read();
+    Serial.println("[+]Restarting...");
+    ESP.restart();
+
+
+    // Serial.println(username.c_str());
+    // Serial.println(userpassword.c_str());
+    // Serial.println(wifipassword.c_str());
+    // Serial.println(wifiname.c_str());
+    // Serial.println(devicename.c_str());
+    // Serial.println(devicepassword.c_str());
 
     // configData.Data.DeviceName=devicename
     
